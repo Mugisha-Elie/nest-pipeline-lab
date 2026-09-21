@@ -1,10 +1,11 @@
-import { Controller, Get, UseGuards, Req, UseInterceptors } from "@nestjs/common";
+import { Controller, Get, UseGuards, Req, UseInterceptors, Param } from "@nestjs/common";
 import { Request } from "express";
 import { AuthGuard } from "./guards/auth.guard";
 import { Public, Roles } from "./decorators/auth.decorator";
 import { InspectContextGuard } from "./guards/inspect-context.guard";
 import { RequestContextService } from "./context/request-context.service";
 import { TransformInterceptor } from "./interceptors/transform.interceptor";
+import { ParsePositiveIntPipe } from "./pipes/parse-positive-int.pipe";
 
 @Controller('system')
 @UseGuards(AuthGuard)  
@@ -48,6 +49,15 @@ export class AppController {
     return {
       message: 'Sensitive admin metrics',
       user: (req as any).user
+    }
+  }
+
+  @Public()
+  @Get('items/:id')
+  getItemById(@Param('id', ParsePositiveIntPipe) id: number) {
+    return {
+      itemId: id,
+      typeofId: typeof id
     }
   }
 }
