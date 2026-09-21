@@ -1,9 +1,12 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
 import { randomUUID } from "crypto";
+import { RequestContextService } from "../context/request-context.service";
 
 @Injectable()
 export class CorrelationIdMiddleware implements NestMiddleware {
+  constructor(private readonly requestContext: RequestContextService) { }
+  
   use(req: Request, res: Response, next: NextFunction) {
     const headerName = 'x-request-id'
 
@@ -22,6 +25,8 @@ export class CorrelationIdMiddleware implements NestMiddleware {
       );
     })
 
-    next();
+    this.requestContext.run({ correlationId }, () => {
+      next()
+    })
   }
 }
