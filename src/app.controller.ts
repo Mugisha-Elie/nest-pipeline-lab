@@ -1,12 +1,14 @@
-import { Controller, Get, UseGuards, Req } from "@nestjs/common";
+import { Controller, Get, UseGuards, Req, UseInterceptors } from "@nestjs/common";
 import { Request } from "express";
 import { AuthGuard } from "./guards/auth.guard";
 import { Public, Roles } from "./decorators/auth.decorator";
 import { InspectContextGuard } from "./guards/inspect-context.guard";
 import { RequestContextService } from "./context/request-context.service";
+import { TransformInterceptor } from "./interceptors/transform.interceptor";
 
 @Controller('system')
 @UseGuards(AuthGuard)  
+@UseInterceptors(TransformInterceptor)  
 export class AppController {
   constructor(private readonly requestContext: RequestContextService) {}
   
